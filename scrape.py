@@ -15,8 +15,8 @@ password_input = driver.find_element_by_id('Password')
 user_login_button = driver.find_element_by_class_name('btn-primary')
 
 # send data to inputs and submit the form
-username_input.send_keys('****************')
-password_input.send_keys('************')
+username_input.send_keys('2***************')
+password_input.send_keys('**********')
 user_login_button.submit()
 
 # select menu
@@ -51,6 +51,59 @@ send_language_info.click()
 start_exam_final = driver.find_element_by_id('alertify-ok')
 ActionChains(driver).move_to_element(
     start_exam_final).click(start_exam_final).perform()
+
+# loop trough all questions
+# while the current question isn't the last question
+
+# here we collect all labels with id qText*, those are the questions
+questions = driver.find_elements_by_xpath("//*[starts-with(@id, 'qText')]")
+
+
+# --> set for loop
+for question_index in range(len(questions)):
+	current_question = questions[question_index].text
+	print(current_question)
+	# images have class qImage*
+	image_address = driver.find_element_by_xpath("//*[starts-with(@id, 'qImage')]")
+	if driver.find_element_by_xpath("//*[starts-with(@id, 'qImage')]"):
+	    print('Image address: https://servisi.euprava.gov.rs/autoskole' + image_address.get_attribute("src"))
+	else :
+	    print('NO IMAGE FOR THIS QUESTION!')
+	# if image_address != None and image_address != '':
+	# 	image_address = 'https://servisi.euprava.gov.rs/autoskole' + image_address
+	# else:
+	# 	image_address = 'NO IMAGE FOR THIS QUESTION!'
+	# print("Image address:", image_address)
+	next_question_button = driver.find_element_by_id('btnNextQ')
+	show_answers_button = driver.find_element_by_id('btnAnswer')
+	show_answers_button.click()
+	right_answer_divs = driver.find_elements_by_class_name('rightAnswer')
+
+	for i in range(0, len(right_answer_divs)):
+		right_answer_radio_button = right_answer_divs[i].find_element_by_tag_name('input')
+		right_answer_radio_button.click()
+		right_answer = right_answer_divs[i].find_element_by_tag_name('label')
+		right_answer_text = right_answer.text
+		print(f"{i + 1}. {right_answer_text}")
+
+	try:
+	  next_question_button.click()
+	except:
+	  continue
+
+
+finish_exam = driver.find_element_by_id('btnFinishExam')
+finish_exam.click()
+confirm_finish = driver.find_element_by_id('alertify-ok')
+ActionChains(driver).move_to_element(
+    confirm_finish).click(confirm_finish).perform()
+
+time.sleep(2)
+
+back_to_profile = driver.find_element_by_class_name('btn-yellow')
+back_to_profile.click()
+# --> select correct answer and store it in db, if there is an image collect the address of it
+
 
 # time.sleep(5)
 # driver.quit()
